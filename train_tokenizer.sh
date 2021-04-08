@@ -13,8 +13,8 @@ fi
 generate_command(){
 	workdir=`pwd`
 	cat <<EOF
-( cd ${workdir} \
-&& \
+( cd ${workdir} && \
+source ${workdir}/venv/bin/activate && \
 env TOKENIZERS_PARALLELISM=false python3 train_tokenizer.py \
 	--input_files ${workdir}/${inputfile} \
 	--output_dir ${workdir}/${outputdir} \

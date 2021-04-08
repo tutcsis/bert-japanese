@@ -15,8 +15,8 @@ generate_command(){
 	partnum=${1}
 	workdir=`pwd`
 	cat <<EOF
-( cd ${workdir} \
-&& \
+( cd ${workdir} && \
+source ${workdir}/venv/bin/activate && \
 python3 create_pretraining_data.py \
 	--input_file ${workdir}/${corpusdir}/corpus_${partnum}.txt \
 	--output_file ${workdir}/${outputdir}/pretraining_data_${partnum}.tfrecord.gz \
@@ -24,7 +24,6 @@ python3 create_pretraining_data.py \
 	--tokenizer_type wordpiece \
 	--mecab_dic_type unidic_lite \
 	--do_whole_word_mask \
-	--gzip_compress \
 	--max_seq_length 512 \
 	--max_predictions_per_seq 80 \
 	--dupe_factor 10 \

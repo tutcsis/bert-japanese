@@ -9,20 +9,27 @@ The architecture of our models are the same as the original BERT models proposed
 - **BERT-base** models consist of 12 layers, 768 dimensions of hidden states, and 12 attention heads.
 - **BERT-large** models consist of 24 layers, 1024 dimensions of hidden states, and 16 attention heads.
 
-## Training Data
+## Environment
 
-The scripts to pretrain Japanese BERT models depends on the specific versions of `tokenizers` and `transformers`.
-The following command is necessary in order to downgrade packages.
+The scripts to train Japanese BERT models depends on the specific versions of `tokenizers` and `transformers`.
+The following command is necessary to prepare the environment.
 
 ```sh
-$ python3 -m pip install --user --upgrade -r requirements.txt
+$ python3 -m venv venv
+$ source venv/bin/activate
+$ ( cd venv && git clone https://github.com/tensorflow/models )
+$ ( cd venv/models && git checkout remotes/origin/r2.3.0 )
+$ pip3 install -r requirements.txt
+$ pip3 install -r venv/models/official/requirements.txt
 ```
+
+## Training Data
 
 The training corpus is generated from the Wikipedia dump file.
 
 ```sh
-$ cd corpus/jawiki-20161001
-$ make
+$ make -C corpus/jawiki-20161001
+$ make -C corpus/jawiki-20181001
 ```
 
 The Following command shows the increasing size of Japanese Wikipedia.
@@ -47,6 +54,7 @@ We used [`fugashi`](https://github.com/polm/fugashi) and [`unidic-lite`](https:/
 
 ```sh
 $ ./train_tokenizer.sh 20161001
+$ ./train_tokenizer.sh 20181001
 ```
 
 ## Training
@@ -54,18 +62,25 @@ $ ./train_tokenizer.sh 20161001
 The models are trained with the same configuration as the original BERT; 512 tokens per instance, 256 instances per batch, and 1M training steps.
 For training of the MLM (masked language modeling) objective, we introduced **whole word masking** in which all of the subword tokens corresponding to a single word (tokenized by MeCab) are masked at once.
 
-For training of each model, we used a v3-8 instance of Cloud TPUs provided by [TensorFlow Research Cloud program](https://www.tensorflow.org/tfrc/).
-The training took about 5 days and 14 days for BERT-base and BERT-large models, respectively.
-
 ### Creation of the pretraining data
+
+The following scripts submits jobs to create the pretraining data.  Each job takes roughly 1 hour.
 
 ```sh
 $ ./create_pretraining_data.sh 20161001
+$ ./create_pretraining_data.sh 20181001
 ```
 
 ### Training of the models
 
-**Note:** all the necessary files need to be stored in a Google Cloud Storage (GCS) bucket.
+The following scripts submits jobs to train BERT-base, wordpiece models.
+
+```sh
+$ ./pretraining.sh 20161001
+$ ./pretraining.sh 20181001
+```
+
+***Following documents are not updated***.
 
 ```sh
 # BERT-base, WordPiece (unidic_lite)
