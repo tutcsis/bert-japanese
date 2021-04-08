@@ -1,0 +1,4 @@
+/WikiExtractor.py
+/corpus/*/*.txt
+/corpus/*/jawiki*
+*~

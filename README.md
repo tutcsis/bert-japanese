@@ -1,11 +1,7 @@
 # Pretrained Japanese BERT models
 
-This is a repository of pretrained Japanese BERT models.
-The models are available in [Transformers](https://github.com/huggingface/transformers) by Hugging Face.
-
-- Model hub: https://huggingface.co/cl-tohoku
-
-For information on the previous versions of our pretrained models, see the [v1.0](https://github.com/cl-tohoku/bert-japanese/tree/v1.0) tag of this repository.
+This is a repository of derived versions of pretrained Japanese BERT models provided by Tohoku-University.
+Because documents and scripts are modified for our research, see [the repository of Tohoku-University](https://github.com/cl-tohoku/bert-japanese) if you need the original version.
 
 ## Model Architecture
 
@@ -16,30 +12,11 @@ The architecture of our models are the same as the original BERT models proposed
 ## Training Data
 
 The models are trained on the Japanese version of Wikipedia.
-The training corpus is generated from the Wikipedia Cirrussearch dump file as of August 31, 2020.
-
-The generated corpus files are 4.0GB in total, consisting of approximately 30M sentences.
-We used the [MeCab](https://taku910.github.io/mecab/) morphological parser with [mecab-ipadic-NEologd](https://github.com/neologd/mecab-ipadic-neologd) dictionary to split texts into sentences.
+The training corpus is generated from the Wikipedia dump file.
 
 ```sh
-$ WORK_DIR="$HOME/work/bert-japanese"
-
-$ python make_corpus_wiki.py \
---input_file jawiki-20200831-cirrussearch-content.json.gz \
---output_file $WORK_DIR/corpus/jawiki-20200831/corpus.txt \
---min_text_length 10 \
---max_text_length 200 \
---mecab_option "-r $HOME/local/etc/mecabrc -d $HOME/local/lib/mecab/dic/mecab-ipadic-neologd-v0.0.7"
-
-# Split corpus files for parallel preprocessing of the files
-$ python merge_split_corpora.py \
---input_files $WORK_DIR/corpus/jawiki-20200831/corpus.txt \
---output_dir $WORK_DIR/corpus/jawiki-20200831 \
---num_files 8
-
-# Sample some lines for training tokenizers
-$ cat $WORK_DIR/corpus/jawiki-20200831/corpus.txt|grep -v '^$'|shuf|head -n 1000000 \
-> $WORK_DIR/corpus/jawiki-20200831/corpus_sampled.txt
+$ cd corpus/jawiki-20161001
+$ make
 ```
 
 ## Tokenization
