@@ -25,6 +25,15 @@ $ cd corpus/jawiki-20161001
 $ make
 ```
 
+The Following command shows the increasing size of Japanese Wikipedia.
+
+```sh
+$ wc corpus/jawiki-20161001/corpus.txt corpus/jawiki-20181001/corpus.txt corpus/jawiki-20210329/corpus.txt 
+  16833992   18163840 2279315211 corpus/jawiki-20161001/corpus.txt
+  18830749   20326833 2557947453 corpus/jawiki-20181001/corpus.txt
+  32234571   57769778 4429197361 corpus/jawiki-20210329/corpus.txt
+```
+
 ## Tokenization
 
 For each of BERT-base and BERT-large, we provide two models with different tokenization methods.
