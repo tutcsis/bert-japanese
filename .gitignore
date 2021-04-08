@@ -1,4 +1,10 @@
 /WikiExtractor.py
 /corpus/*/*.txt
 /corpus/*/jawiki*
+/tokenizers/
+/**/__pycache__/
+train_tokenizer_*.e*
+train_tokenizer_*.o*
+create_pretraining_data_*.e*
+create_pretraining_data_*.o*
 *~

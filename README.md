@@ -11,7 +11,13 @@ The architecture of our models are the same as the original BERT models proposed
 
 ## Training Data
 
-The models are trained on the Japanese version of Wikipedia.
+The scripts to pretrain Japanese BERT models depends on the specific versions of `tokenizers` and `transformers`.
+The following command is necessary in order to downgrade packages.
+
+```sh
+$ python3 -m pip install --user --upgrade -r requirements.txt
+```
+
 The training corpus is generated from the Wikipedia dump file.
 
 ```sh
@@ -31,21 +37,7 @@ For each of BERT-base and BERT-large, we provide two models with different token
 We used [`fugashi`](https://github.com/polm/fugashi) and [`unidic-lite`](https://github.com/polm/unidic-lite) packages for the tokenization.
 
 ```sh
-$ WORK_DIR="$HOME/work/bert-japanese"
-
-# WordPiece (unidic_lite)
-$ TOKENIZERS_PARALLELISM=false python train_tokenizer.py \
---input_files $WORK_DIR/corpus/jawiki-20200831/corpus_sampled.txt \
---output_dir $WORK_DIR/tokenizers/jawiki-20200831/wordpiece_unidic_lite \
---tokenizer_type wordpiece \
---mecab_dic_type unidic_lite \
---vocab_size 32768 \
---limit_alphabet 6129 \
---num_unused_tokens 10
-
-# Character
-$ head -n 6144 $WORK_DIR/tokenizers/jawiki-20200831/wordpiece_unidic_lite/vocab.txt \
-> $WORK_DIR/tokenizers/jawiki-20200831/character/vocab.txt
+$ ./train_tokenizer.sh 20161001
 ```
 
 ## Training
@@ -59,37 +51,7 @@ The training took about 5 days and 14 days for BERT-base and BERT-large models, 
 ### Creation of the pretraining data
 
 ```sh
-$ WORK_DIR="$HOME/work/bert-japanese"
-
-# WordPiece (unidic_lite)
-$ mkdir -p $WORK_DIR/bert/jawiki-20200831/wordpiece_unidic_lite/pretraining_data
-# It takes 3h and 420GB RAM, producing 43M instances
-$ seq -f %02g 1 8|xargs -L 1 -I {} -P 8 python create_pretraining_data.py \
---input_file $WORK_DIR/corpus/jawiki-20200831/corpus_{}.txt \
---output_file $WORK_DIR/bert/jawiki-20200831/wordpiece_unidic_lite/pretraining_data/pretraining_data_{}.tfrecord.gz \
---vocab_file $WORK_DIR/tokenizers/jawiki-20200831/wordpiece_unidic_lite/vocab.txt \
---tokenizer_type wordpiece \
---mecab_dic_type unidic_lite \
---do_whole_word_mask \
---gzip_compress \
---max_seq_length 512 \
---max_predictions_per_seq 80 \
---dupe_factor 10
-
-# Character
-$ mkdir $WORK_DIR/bert/jawiki-20200831/character/pretraining_data
-# It takes 4h10m and 615GB RAM, producing 55M instances
-$ seq -f %02g 1 8|xargs -L 1 -I {} -P 8 python create_pretraining_data.py \
---input_file $WORK_DIR/corpus/jawiki-20200831/corpus_{}.txt \
---output_file $WORK_DIR/bert/jawiki-20200831/character/pretraining_data/pretraining_data_{}.tfrecord.gz \
---vocab_file $WORK_DIR/tokenizers/jawiki-20200831/character/vocab.txt \
---tokenizer_type character \
---mecab_dic_type unidic_lite \
---do_whole_word_mask \
---gzip_compress \
---max_seq_length 512 \
---max_predictions_per_seq 80 \
---dupe_factor 10
+$ ./create_pretraining_data.sh 20161001
 ```
 
 ### Training of the models
