@@ -1,4 +1,5 @@
 /WikiExtractor.py
+/corpus/*/make.log
 /corpus/*/*.txt
 /corpus/*/jawiki*
 /tokenizers/
