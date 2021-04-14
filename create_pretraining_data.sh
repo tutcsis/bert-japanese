@@ -19,7 +19,7 @@ generate_command(){
 source ${workdir}/venv/bin/activate && \
 python3 create_pretraining_data.py \
 	--input_file ${workdir}/${corpusdir}/corpus_${partnum}.txt \
-	--output_file ${workdir}/${outputdir}/pretraining_data_${partnum}.tfrecord.gz \
+	--output_file ${workdir}/${outputdir}/pretraining_data_${partnum}.tfrecord \
 	--vocab_file ${workdir}/${vocabfile} \
 	--tokenizer_type wordpiece \
 	--mecab_dic_type unidic_lite \
