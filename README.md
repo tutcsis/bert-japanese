@@ -80,6 +80,13 @@ $ ./pretraining.sh 20161001
 $ ./pretraining.sh 20181001
 ```
 
+### Copy files
+
+```sh
+$ make -C models/jawiki-20161001
+$ make -C models/jawiki-20181001
+```
+
 ***Following documents are not updated***.
 
 ```sh
