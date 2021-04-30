@@ -7,6 +7,7 @@
 /venv/
 /models/*/config.json
 /models/*/model.ckpt.*
+/models/*/pytorch_model.bin
 /models/*/vocab.index
 /**/__pycache__/
 train_tokenizer_*.e*
