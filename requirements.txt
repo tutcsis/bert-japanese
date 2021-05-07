@@ -4,6 +4,7 @@ tensorflow-gpu==2.3.1
 tensorflow-datasets>=3.2.0
 tf-models-official==2.3.0
 tqdm
+torch
 tokenizers==0.9.2
 transformers==3.4.0
 unidic_lite
