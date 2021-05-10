@@ -6,9 +6,10 @@
 /bert/
 /venv/
 /models/*/config.json
+/models/*/tokenizer_config.json
 /models/*/model.ckpt.*
 /models/*/pytorch_model.bin
-/models/*/vocab.index
+/models/*/vocab.txt
 /**/__pycache__/
 train_tokenizer_*.e*
 train_tokenizer_*.o*
