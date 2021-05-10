@@ -1,0 +1,5 @@
+{
+    "do_lower_case": false,
+    "tokenize_chinese_chars": false,
+    "subword_tokenizer_type": "wordpiece"
+}
