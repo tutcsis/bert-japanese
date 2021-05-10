@@ -5,9 +5,11 @@ Because documents and scripts are modified for our research, see [the repository
 
 ## Model Architecture
 
-The architecture of our models are the same as the original BERT models proposed by Google.
+The architecture of models provided by Tohoku-University are the same as the original BERT models proposed by Google.
 - **BERT-base** models consist of 12 layers, 768 dimensions of hidden states, and 12 attention heads.
 - **BERT-large** models consist of 24 layers, 1024 dimensions of hidden states, and 16 attention heads.
+
+This repository only supports **BERT-base** version.
 
 ## Environment
 
@@ -28,8 +30,7 @@ $ pip3 install -r venv/models/official/requirements.txt
 The training corpus is generated from the Wikipedia dump file.
 
 ```sh
-$ make -C corpus/jawiki-20161001
-$ make -C corpus/jawiki-20181001
+$ make -C corpus/jawiki-20210301
 ```
 
 The Following command shows the increasing size of Japanese Wikipedia.
@@ -38,23 +39,23 @@ The Following command shows the increasing size of Japanese Wikipedia.
 $ wc corpus/jawiki-20161001/corpus.txt corpus/jawiki-20181001/corpus.txt corpus/jawiki-20210329/corpus.txt 
   16833992   18163840 2279315211 corpus/jawiki-20161001/corpus.txt
   18830749   20326833 2557947453 corpus/jawiki-20181001/corpus.txt
-  32234571   57769778 4429197361 corpus/jawiki-20210329/corpus.txt
+  21851738   23714741 2987486185 corpus/jawiki-20210301/corpus.txt
 ```
 
 ## Tokenization
 
-For each of BERT-base and BERT-large, we provide two models with different tokenization methods.
+For each of BERT-base and BERT-large, the group of Tohoku-University provides two models with different tokenization methods.
 
 - For **`wordpiece`** models, the texts are first tokenized by MeCab with the Unidic 2.1.2 dictionary and then split into subwords by the WordPiece algorithm.
   The vocabulary size is 32768.
 - For **`character`** models, the texts are first tokenized by MeCab with the Unidic 2.1.2 dictionary and then split into characters.
   The vocabulary size is 6144.
 
-We used [`fugashi`](https://github.com/polm/fugashi) and [`unidic-lite`](https://github.com/polm/unidic-lite) packages for the tokenization.
+This repository only supports **`wordpiece`** model.
+We use [`fugashi`](https://github.com/polm/fugashi) and [`unidic-lite`](https://github.com/polm/unidic-lite) packages for the tokenization.
 
 ```sh
-$ ./train_tokenizer.sh 20161001
-$ ./train_tokenizer.sh 20181001
+$ ./train_tokenizer.sh 20210301
 ```
 
 ## Training
@@ -67,121 +68,28 @@ For training of the MLM (masked language modeling) objective, we introduced **wh
 The following scripts submits jobs to create the pretraining data.  Each job takes roughly 1 hour.
 
 ```sh
-$ ./create_pretraining_data.sh 20161001
-$ ./create_pretraining_data.sh 20181001
+$ ./create_pretraining_data.sh 20210301
 ```
 
 ### Training of the models
 
-The following scripts submits jobs to train BERT-base, wordpiece models.
+The following script submits jobs to train BERT-base, wordpiece models.
 
 ```sh
-$ ./pretraining.sh 20161001
-$ ./pretraining.sh 20181001
+$ ./pretraining.sh 20210301
 ```
 
-### Copy files
+After the training, the following command is necessary to prepare the model files which are available from [Transformers](https://github.com/huggingface/transformers/).
 
 ```sh
-$ make -C models/jawiki-20161001
-$ make -C models/jawiki-20181001
+$ make -C models/jawiki-20210301
 ```
 
-***Following documents are not updated***.
+### Test of the models
 
-```sh
-# BERT-base, WordPiece (unidic_lite)
-$ ctpu up -name tpu01 -tpu-size v3-8 -tf-version 2.3
-$ cd /usr/share/models
-$ sudo pip3 install -r official/requirements.txt
-$ tmux
-$ export PYTHONPATH="$PYTHONPATH:/usr/share/tpu/models"
-$ WORK_DIR="gs://<your GCS bucket name>/bert-japanese"
-$ python3 official/nlp/bert/run_pretraining.py \
---input_files="$WORK_DIR/bert/jawiki-20200831/wordpiece_unidic_lite/pretraining_data/pretraining_data_*.tfrecord" \
---model_dir="$WORK_DIR/bert/jawiki-20200831/wordpiece_unidic_lite/bert-base" \
---bert_config_file="$WORK_DIR/bert/jawiki-20200831/wordpiece_unidic_lite/bert-base/config.json" \
---max_seq_length=512 \
---max_predictions_per_seq=80 \
---train_batch_size=256 \
---learning_rate=1e-4 \
---num_train_epochs=100 \
---num_steps_per_epoch=10000 \
---optimizer_type=adamw \
---warmup_steps=10000 \
---distribution_strategy=tpu \
---tpu=tpu01
-
-# BERT-base, Character
-$ ctpu up -name tpu02 -tpu-size v3-8 -tf-version 2.3
-$ cd /usr/share/models
-$ sudo pip3 install -r official/requirements.txt
-$ tmux
-$ export PYTHONPATH="$PYTHONPATH:/usr/share/tpu/models"
-$ WORK_DIR="gs://<your GCS bucket name>/bert-japanese"
-$ python3 official/nlp/bert/run_pretraining.py \
---input_files="$WORK_DIR/bert/jawiki-20200831/character/pretraining_data/pretraining_data_*.tfrecord" \
---model_dir="$WORK_DIR/bert/jawiki-20200831/character/bert-base" \
---bert_config_file="$WORK_DIR/bert/jawiki-20200831/character/bert-base/config.json" \
---max_seq_length=512 \
---max_predictions_per_seq=80 \
---train_batch_size=256 \
---learning_rate=1e-4 \
---num_train_epochs=100 \
---num_steps_per_epoch=10000 \
---optimizer_type=adamw \
---warmup_steps=10000 \
---distribution_strategy=tpu \
---tpu=tpu02
-
-# BERT-large, WordPiece (unidic_lite)
-$ ctpu up -name tpu03 -tpu-size v3-8 -tf-version 2.3
-$ cd /usr/share/models
-$ sudo pip3 install -r official/requirements.txt
-$ tmux
-$ export PYTHONPATH="$PYTHONPATH:/usr/share/tpu/models"
-$ WORK_DIR="gs://<your GCS bucket name>/bert-japanese"
-$ python3 official/nlp/bert/run_pretraining.py \
---input_files="$WORK_DIR/bert/jawiki-20200831/wordpiece_unidic_lite/pretraining_data/pretraining_data_*.tfrecord" \
---model_dir="$WORK_DIR/bert/jawiki-20200831/wordpiece_unidic_lite/bert-large" \
---bert_config_file="$WORK_DIR/bert/jawiki-20200831/wordpiece_unidic_lite/bert-large/config.json" \
---max_seq_length=512 \
---max_predictions_per_seq=80 \
---train_batch_size=256 \
---learning_rate=5e-5 \
---num_train_epochs=100 \
---num_steps_per_epoch=10000 \
---optimizer_type=adamw \
---warmup_steps=10000 \
---distribution_strategy=tpu \
---tpu=tpu03
-
-# BERT-large, Character
-$ ctpu up -name tpu04 -tpu-size v3-8 -tf-version 2.3
-$ cd /usr/share/models
-$ sudo pip3 install -r official/requirements.txt
-$ tmux
-$ export PYTHONPATH="$PYTHONPATH:/usr/share/tpu/models"
-$ WORK_DIR="gs://<your GCS bucket name>/bert-japanese"
-$ python3 official/nlp/bert/run_pretraining.py \
---input_files="$WORK_DIR/bert/jawiki-20200831/character/pretraining_data/pretraining_data_*.tfrecord" \
---model_dir="$WORK_DIR/bert/jawiki-20200831/character/bert-large" \
---bert_config_file="$WORK_DIR/bert/jawiki-20200831/character/bert-large/config.json" \
---max_seq_length=512 \
---max_predictions_per_seq=80 \
---train_batch_size=256 \
---learning_rate=5e-5 \
---num_train_epochs=100 \
---num_steps_per_epoch=10000 \
---optimizer_type=adamw \
---warmup_steps=10000 \
---distribution_strategy=tpu \
---tpu=tpu04
-```
+See [the other repository](https://github.com/tsuchm/nict-bert-rcqa-test).
 
 ## Licenses
-
-The pretrained models are distributed under the terms of the [Creative Commons Attribution-ShareAlike 3.0](https://creativecommons.org/licenses/by-sa/3.0/).
 
 The codes in this repository are distributed under the Apache License 2.0.
 
@@ -202,7 +110,3 @@ The codes in this repository are distributed under the Apache License 2.0.
 - Sentencepiece Japanese BERT model, trained on SNS corpus
     - Author: Hottolink, Inc.
     - https://github.com/hottolink/hottoSNS-bert
-
-## Acknowledgments
-
-The models are trained with Cloud TPUs provided by [TensorFlow Research Cloud](https://www.tensorflow.org/tfrc/) program.
