@@ -1,2 +1,5 @@
 /*.xz
 /*.tokens
+/*.dat
+/sampling_*
+/*.log

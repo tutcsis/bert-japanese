@@ -2,7 +2,7 @@
 
 generate_command(){
 	infile=${1}
-	outfile=`basename ${1} .xz`.tokens
+	outfile=`basename ${1} .xz`.dat
 	curdir=`pwd`
 	cat <<EOF
 cd ${curdir} && python3 sampling.py ${infile} --output ${outfile}
