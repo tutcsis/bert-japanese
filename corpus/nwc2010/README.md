@@ -1,9 +1,12 @@
 # BERT model traind from NWC2010
 
-## Download
+Invoke following commands on the root directory of this repository.
 
 ```sh
-nice wget -i filelist -o download.log
+$ make -C corpus/nwc2010
+$ ./train_tokenizer.sh nwc2010
+$ ./create_pretraining_data.sh nwc2010
+$ ./pretraining.sh nwc2010
 ```
 
 # Links
