@@ -1,9 +1,17 @@
 #!/bin/sh
 
 wikidate=${1}
-inputfile=corpus/jawiki-${wikidate}/corpus_sampled.txt
-outputdir=tokenizers/jawiki-${wikidate}/wordpiece_unidic_lite
-if [ ! -f ${corpusfile} ]; then
+case ${wikidate} in
+	[0-9][0-9]*)
+		inputfile=corpus/jawiki-${wikidate}/corpus_sampled.txt
+		outputdir=tokenizers/jawiki-${wikidate}/wordpiece_unidic_lite
+		;;
+	*)
+		inputfile=corpus/${wikidate}/corpus_sampled.txt
+		outputdir=tokenizers/${wikidate}/wordpiece_unidic_lite
+		;;
+esac
+if [ ! -f ${inptfile} ]; then
 	exit 1
 fi
 if [ ! -d ${outputdir} ]; then

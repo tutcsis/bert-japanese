@@ -1,9 +1,18 @@
 #!/bin/sh
 
 wikidate=${1}
-corpusdir=corpus/jawiki-${wikidate}
-vocabfile=tokenizers/jawiki-${wikidate}/wordpiece_unidic_lite/vocab.txt
-outputdir=bert/jawiki-${wikidate}/wordpiece_unidic_lite/pretraining_data
+case ${wikidate} in
+	[0-9][0-9]*)
+		corpusdir=corpus/jawiki-${wikidate}
+		vocabfile=tokenizers/jawiki-${wikidate}/wordpiece_unidic_lite/vocab.txt
+		outputdir=bert/jawiki-${wikidate}/wordpiece_unidic_lite/pretraining_data
+		;;
+	*)
+		corpusdir=corpus/${wikidate}
+		vocabfile=tokenizers/${wikidate}/wordpiece_unidic_lite/vocab.txt
+		outputdir=bert/${wikidate}/wordpiece_unidic_lite/pretraining_data
+		;;
+esac
 if [ ! -f ${vocabfile} ]; then
 	exit 1
 fi

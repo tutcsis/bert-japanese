@@ -1,9 +1,16 @@
 #!/bin/sh
 
 wikidate=${1}
-datadir=bert/jawiki-${wikidate}/wordpiece_unidic_lite/pretraining_data
-modeldir=bert/jawiki-${wikidate}/wordpiece_unidic_lite/bert-base
-
+case ${wikidate} in
+	[0-9][0-9]*)
+		datadir=bert/jawiki-${wikidate}/wordpiece_unidic_lite/pretraining_data
+		modeldir=bert/jawiki-${wikidate}/wordpiece_unidic_lite/bert-base
+		;;
+	*)
+		datadir=bert/${wikidate}/wordpiece_unidic_lite/pretraining_data
+		modeldir=bert/${wikidate}/wordpiece_unidic_lite/bert-base
+		;;
+esac
 if [ ! -d ${datadir} ]; then
 	echo "Missing ${datadir}"
 	exit 1
