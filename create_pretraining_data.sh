@@ -42,5 +42,5 @@ EOF
 
 for i in `seq -f %02g 1 8`
 do
-	generate_command ${i} | qsub -q cpu-only -l select=1:ncpus=4:ngpus=0 -N create_pretraining_data_${wikidate}_${i}
+	generate_command ${i} | qsub -q cpu-only -l select=1:ncpus=8:ngpus=0 -N create_pretraining_data_${wikidate}_${i}
 done
