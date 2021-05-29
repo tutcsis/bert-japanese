@@ -8,7 +8,7 @@ corpus_sampled.txt: ja.txt
 	grep -v '^$$' $^ | shuf -n 1000000 -o $@
 
 corpus_01.txt: ja.txt
-	$(PYTHON) ../../merge_split_corpora.py --input_files $^ --output_dir ./ --num_files 8
+	$(PYTHON) ../../merge_split_corpora.py --input_files $^ --output_dir ./ --num_files 32
 
 ja.txt: ja.txt.xz
 	xz --decompress --keep $^
