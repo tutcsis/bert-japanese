@@ -40,7 +40,12 @@ python3 create_pretraining_data.py \
 EOF
 }
 
-for i in `seq -f %02g 1 8`
+for f in ${corpusdir}/corpus_*.txt
 do
-	generate_command ${i} | qsub -q cpu-only -l select=1:ncpus=8:ngpus=0 -N create_pretraining_data_${wikidate}_${i}
+	i=`basename ${f} .txt|cut -f2 -d_`
+	case ${i} in
+		[0-9][0-9])
+			generate_command ${i}|qsub -q cpu-only -l select=1:ncpus=8:ngpus=0 -N create_pretraining_data_${wikidate}_${i}
+			;;
+	esac
 done
